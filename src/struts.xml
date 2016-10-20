@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+
+    <!--全局配置-->
+    <constant name="struts.devMode" value="true"/><!--设置开发者模式-->
+    <constant name="struts.enable.DynamicMethodInvocation" value="true"/><!--设置可以实现动作动态方法-->
+    <constant name="struts.ognl.allowStaticMethodAccess" value="true"/><!--设置静态方法调用,在OGNL标签中-->
+    <!--限制文件上传大小的第一种方式 直接修改常量,目前只有该种方式可用-->
+    <constant name="struts.multipart.maxSize" value="104857600"/><!--设置文件上传的最大size为10M-->
+    <!--配置全局消息资源包-->
+    <constant name="struts.custom.i18n.resources" value="web.action.fileupload_message.properties"/>
+    <package name="my" extends="struts-default" abstract="true">
+    </package>
+
+    <!--局部配置-->
+    <!--包-->
+    <package name="user" extends="my">
+        <!--注册动作-->
+        <action name="register" class="web.action.UserAction" method="register">
+            <result name="success">/success.jsp</result>
+            <result name="exists">/message.jsp</result>
+            <result name="none">/none.jsp</result>
+            <!--当出现问题之后要回到注册页面-->
+            <result name="input">/register.jsp</result>
+        </action>
+
+        <!--查看所有用户的动作-->
+        <action name="findAll" class="web.action.UserAction" method="findAll">
+            <result name="success">/findAllUser.jsp</result>
+        </action>
+
+        <!--文件上传的动作-->
+        <action name="upload" class="web.action.UploadAction" method="upload">
+            <!--修改上传文件的大小的第二种方式 通过fileupload的拦截器通过注入的方式 ,控制上传文件的大小-->
+            <!--这种方式无法使用-->
+            <!--<interceptor-ref name="defaultStack">
+                <param name="fileUpload.maximumSize">104857600</param>
+            </interceptor-ref>-->
+            <!--设置上传文件的类型和扩展名-->
+            <interceptor-ref name="defaultStack">
+                <!--限制上传文件的扩展名,如果有多个用,号隔开-->
+                <param name="fileUpload.allowedExtensions">jpg,png,bmp</param>
+                <!--限制上传文件的MIME类型-->
+                <param name="fileUpload.allowedTypes">image/jpg,image/pjpeg,image/png</param>
+            </interceptor-ref>
+            <result name="input">/upload.jsp</result>
+        </action>
+        <!--多文件上传-->
+        <action name="uploadMore" class="web.action.UploadMoreAction" method="uploadMore">
+
+        </action>
+
+        <!--文件  的下载-->
+        <action name="download" class="web.action.DownloadAction" method="download">
+            <result name="success" type="stream">
+                <!--给stream的结果类型注入参数: Content-type-->
+                <param name="contentType">application/octet-stream</param>
+                <!--告知客户端浏览器,以下载的方式打开-->
+                <!--<param name="contentDisposition">attachment;filename=photo.jpg</param>-->
+                <param name="contentDisposition">attachment;filename=@java.net.URLEncoder@encode(filename,"UTF-8")</param>
+                <!--注入字节输入流,取值要写动作类的属性名称-->
+                <param name="inputName">inputStream</param>
+            </result>
+        </action>
+
+
+        <!--ActionContext存取数据-->
+        <action name="context" class="web.action.ContextAction">
+            <result name="success">/context/context.jsp</result>
+        </action>
+
+        <action name="context2" class="web.action.ContextAction2">
+            <result name="success">/context/context.jsp</result>
+        </action>
+    </package>
+
+</struts>

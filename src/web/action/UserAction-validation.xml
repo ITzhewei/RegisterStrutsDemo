@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE validators PUBLIC
+        "-//Apache Struts//XWork Validator 1.0.3//EN"
+        "http://struts.apache.org/dtds/xwork-validator-1.0.3.dtd">
+<!-- 当使用ActionClassName-validation.xml来命名文件时，它是一个动作类验证器。会验证动作类中的所有动作方法 -->
+<validators>
+    <!--基于字段的声明式验证-->
+    <!--field中name的属性指定的是表单name的属性的取值-->
+    <field name="fieldErrors">
+        <!--struts2为我们内部集成了很多内置验证器 -->
+        <field-validator type="requiredstring">
+            <message>用户名不能为空</message>
+        </field-validator>
+    </field>
+</validators>
